@@ -3,34 +3,38 @@
 <head>
 <title> Francis la quiebra </title>
 <style>
-    body{
+    body {
         background: linear-gradient(135deg, #0a1a0a 0%, #1a3a1a 100%);
-        background-color: #0a1a0a;
         color: #e0ffe0;
         font-family: 'Courier New', Courier, monospace;
         text-align: center;
-        padding: 50px;
         display: flex;
         justify-content: center;
         align-items: center;
         min-height: 100vh;
         margin: 0;
+        overflow-x: hidden; /* Evita scroll horizontal por las hojas */
     }
-        .tarjeta {
-            animation: aparecer 1s ease-out;
+
+    .tarjeta {
+        animation: aparecer 1s ease-out;
         background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(46, 204, 113, 0.3);
         padding: 40px;
         border-radius: 20px;
         max-width: 350px;
-        margin-top: auto;
-        }
-a {
-color: #2ecc71;
-text-decoration: none;
-font-weight: bold;
-}
+        box-shadow: 0px 20px 40px rgba(0,0,0,0.5);
+    }
+
+    a {
+        color: #2ecc71;
+        text-decoration: none;
+        font-weight: bold;
+        display: inline-block;
+        margin-top: 10px;
+    }
+
     button {
         background-color: #27ae60;
         color: white;
@@ -41,71 +45,99 @@ font-weight: bold;
         margin-top: 20px;
         box-shadow: 0px 4px 15px rgba(39, 174, 96, 0.4);
     }
+
     button:hover {
         background-color: #2ecc71;
         transform: scale(1.1);
         transition: 0.3s;
     }
-    img{
+
+    img {
         border-radius: 50%;
         border: 4px solid #2ecc71;
         width: 150px;
         height: 150px;
         object-fit: cover;
-       margin-bottom: 20px; 
-       box-shadow: 0px 0px 20px rgba(46, 204, 112,0.6);
+        margin-bottom: 20px; 
+        box-shadow: 0px 0px 20px rgba(46, 204, 112,0.6);
     }
-@keyframes aparecer {
-    from {opacity: 0; transform: translateY(30px);}
-    to {opacity: 1; transform: translateY(0);}
-}
-/* Contenedor de las hojas */
-.hojas-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: -1; /* Esto lo pone DETRÁS de tu tarjeta */
-    pointer-events: none;
-}
 
-.hoja {
-    position: absolute;
-    top: -50px;
-    font-size: 25px;
-    user-select: none;
-    animation: caer linear infinite;
-}
-@keyframes caer {
-    0% {
-        transform: translateY(0) rotate(0deg) translateX(0);
-        opacity: 1;
+    /* Estilo del reproductor */
+    .musica-box {
+        margin-top: 25px;
+        padding: 15px;
+        background: rgba(46, 204, 113, 0.1);
+        border-radius: 12px;
+        border: 1px dashed #2ecc71;
     }
-    100% {
-        transform: translateY(110vh) rotate(720deg) translateX(50px);
-        opacity: 0;
+
+    .musica-box p {
+        font-size: 10px;
+        margin: 0 0 10px 0;
+        text-transform: uppercase;
     }
-}
+
+    audio {
+        width: 100%;
+        height: 30px;
+        filter: invert(100%) hue-rotate(90deg) brightness(1.5); /* Lo vuelve verde */
+    }
+
+    @keyframes aparecer {
+        from {opacity: 0; transform: translateY(30px);}
+        to {opacity: 1; transform: translateY(0);}
+    }
+
+    /* Contenedor de las hojas */
+    .hojas-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    .hoja {
+        position: absolute;
+        top: -50px;
+        font-size: 25px;
+        user-select: none;
+        animation: caer linear infinite;
+    }
+
+    @keyframes caer {
+        0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 1; }
+        100% { transform: translateY(110vh) rotate(720deg) translateX(50px); opacity: 0; }
+    }
 </style>
 </head>
 <body>
     <div class="hojas-container">
-    <div class="hoja" style="left: 10%; animation-duration: 5s; animation-delay: 0s;">🌿</div>
-    <div class="hoja" style="left: 30%; animation-duration: 7s; animation-delay: 2s;">🌿</div>
-    <div class="hoja" style="left: 50%; animation-duration: 6s; animation-delay: 1s;">🌿</div>
-    <div class="hoja" style="left: 70%; animation-duration: 8s; animation-delay: 3s;">🌿</div>
-    <div class="hoja" style="left: 90%; animation-duration: 5s; animation-delay: 0.5s;">🌿</div>
-    <div class="hoja" style="left: 20%; animation-duration: 9s; animation-delay: 4s;">🌿</div>
-    <div class="hoja" style="left: 80%; animation-duration: 6s; animation-delay: 2s;">🌿</div>
-</div>
+        <div class="hoja" style="left: 10%; animation-duration: 5s;">🌿</div>
+        <div class="hoja" style="left: 30%; animation-duration: 7s; animation-delay: 2s;">🌿</div>
+        <div class="hoja" style="left: 50%; animation-duration: 6s; animation-delay: 1s;">🌿</div>
+        <div class="hoja" style="left: 70%; animation-duration: 8s; animation-delay: 3s;">🌿</div>
+        <div class="hoja" style="left: 90%; animation-duration: 5s; animation-delay: 0.5s;">🌿</div>
+    </div>
+
     <div class="tarjeta">
-   <img src="Captura.PNG" alt="Foto de Thaiel"> 
-  <h1> Soy Francis </h1>
-<p> este es mi priemr sitio creado desde 0 </p>
- <a href="https://www.instagram.com/benites_francis/"> ir a mi instagram</a>
-<br>
-<button onclick="alert('mi IG')">presioname</button>
-</div> </body> 
+        <img src="Captura.PNG" alt="Foto de Thaiel"> 
+        <h1> Soy Francis </h1>
+        <p> Este es mi primer sitio creado desde 0 </p>
+        <a href="https://www.instagram.com/benites_francis/">ir a mi instagram</a>
+        <br>
+        <button onclick="alert('Mi Instagram es @benites_francis')">Presióname</button>
+
+        <div class="musica-box">
+            <p>🎵 Escuchando: Watussi</p>
+            <audio controls>
+                <source src="watussi.mp3" type="audio/mpeg">
+                Tu navegador no soporta el audio.
+            </audio>
+        </div>
+    </div>
+</body> 
 </html>
