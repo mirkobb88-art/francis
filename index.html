@@ -13,7 +13,16 @@
         align-items: center;
         min-height: 100vh;
         margin: 0;
-        overflow-x: hidden; /* Evita scroll horizontal por las hojas */
+        overflow-x: hidden;
+        transition: background 0.5s; /* Transición suave para el fondo */
+    }
+
+    /* Animación de luces de neón para la tarjeta */
+    @keyframes lucesFiesta {
+        0% { border-color: #2ecc71; box-shadow: 0 0 20px #2ecc71; }
+        33% { border-color: #e74c3c; box-shadow: 0 0 30px #e74c3c; }
+        66% { border-color: #f1c40f; box-shadow: 0 0 30px #f1c40f; }
+        100% { border-color: #9b59b6; box-shadow: 0 0 20px #9b59b6; }
     }
 
     .tarjeta {
@@ -25,6 +34,14 @@
         border-radius: 20px;
         max-width: 350px;
         box-shadow: 0px 20px 40px rgba(0,0,0,0.5);
+        position: relative;
+        transition: 0.5s;
+    }
+
+    /* Clase que se activa con la música */
+    .modo-fiesta-activa {
+        animation: lucesFiesta 1.5s infinite alternate !important;
+        transform: scale(1.05);
     }
 
     a {
@@ -46,12 +63,6 @@
         box-shadow: 0px 4px 15px rgba(39, 174, 96, 0.4);
     }
 
-    button:hover {
-        background-color: #2ecc71;
-        transform: scale(1.1);
-        transition: 0.3s;
-    }
-
     img {
         border-radius: 50%;
         border: 4px solid #2ecc71;
@@ -62,7 +73,6 @@
         box-shadow: 0px 0px 20px rgba(46, 204, 112,0.6);
     }
 
-    /* Estilo del reproductor */
     .musica-box {
         margin-top: 25px;
         padding: 15px;
@@ -71,16 +81,20 @@
         border: 1px dashed #2ecc71;
     }
 
-    .musica-box p {
-        font-size: 10px;
-        margin: 0 0 10px 0;
-        text-transform: uppercase;
-    }
-
     audio {
         width: 100%;
         height: 30px;
-        filter: invert(100%) hue-rotate(90deg) brightness(1.5); /* Lo vuelve verde */
+        filter: invert(100%) hue-rotate(90deg) brightness(1.5);
+    }
+
+    /* Hojas locas para la fiesta */
+    .hoja-fiesta {
+        animation: caer 2s linear infinite, cambiarColor 1s infinite !important;
+    }
+
+    @keyframes cambiarColor {
+        0% { filter: hue-rotate(0deg); }
+        100% { filter: hue-rotate(360deg); }
     }
 
     @keyframes aparecer {
@@ -88,7 +102,6 @@
         to {opacity: 1; transform: translateY(0);}
     }
 
-    /* Contenedor de las hojas */
     .hojas-container {
         position: fixed;
         top: 0;
@@ -115,7 +128,7 @@
 </style>
 </head>
 <body>
-    <div class="hojas-container">
+    <div class="hojas-container" id="contenedorHojas">
         <div class="hoja" style="left: 10%; animation-duration: 5s;">🌿</div>
         <div class="hoja" style="left: 30%; animation-duration: 7s; animation-delay: 2s;">🌿</div>
         <div class="hoja" style="left: 50%; animation-duration: 6s; animation-delay: 1s;">🌿</div>
@@ -123,7 +136,7 @@
         <div class="hoja" style="left: 90%; animation-duration: 5s; animation-delay: 0.5s;">🌿</div>
     </div>
 
-    <div class="tarjeta">
+    <div class="tarjeta" id="miTarjeta">
         <img src="Captura.PNG" alt="Foto de Thaiel"> 
         <h1> Soy Francis </h1>
         <p> Este es mi primer sitio creado desde 0 </p>
@@ -132,12 +145,35 @@
         <button onclick="alert('Mi Instagram es @benites_francis')">Presióname</button>
 
         <div class="musica-box">
-            <p>🎵 Escuchando: Watussi</p>
-            <audio controls>
+            <p id="statusMusica">🎵 Escuchando: Watussi</p>
+            <audio id="track" controls>
                 <source src="watussi.mp3" type="audio/mpeg">
                 Tu navegador no soporta el audio.
             </audio>
         </div>
     </div>
+
+    <script>
+        const audio = document.getElementById('track');
+        const tarjeta = document.getElementById('miTarjeta');
+        const status = document.getElementById('statusMusica');
+        const hojas = document.querySelectorAll('.hoja');
+
+        // ACTIVAR MODO FIESTA
+        audio.onplay = function() {
+            tarjeta.classList.add('modo-fiesta-activa');
+            status.innerText = "🔥 ¡MODO FIESTA ACTIVO! 🔥";
+            hojas.forEach(h => h.classList.add('hoja-fiesta'));
+            document.body.style.background = "#000"; // Fondo negro total para que resalte el neón
+        };
+
+        // DESACTIVAR MODO FIESTA
+        audio.onpause = function() {
+            tarjeta.classList.remove('modo-fiesta-activa');
+            status.innerText = "🎵 Escuchando: Watussi";
+            hojas.forEach(h => h.classList.remove('hoja-fiesta'));
+            document.body.style.background = "linear-gradient(135deg, #0a1a0a 0%, #1a3a1a 100%)";
+        };
+    </script>
 </body> 
 </html>
