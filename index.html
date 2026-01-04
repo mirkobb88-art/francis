@@ -13,11 +13,23 @@
         align-items: center;
         min-height: 100vh;
         margin: 0;
-        overflow-x: hidden;
-        transition: background 0.5s; /* Transición suave para el fondo */
+        overflow: hidden; /* Evita scrolls raros */
+        transition: background 0.5s;
     }
 
-    /* Animación de luces de neón para la tarjeta */
+    /* EFECTO GLOW DEL MOUSE */
+    .mouse-glow {
+        position: fixed;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(46, 204, 113, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: -2;
+        transform: translate(-50%, -50%);
+        transition: background 0.5s, width 0.5s, height 0.5s;
+    }
+
     @keyframes lucesFiesta {
         0% { border-color: #2ecc71; box-shadow: 0 0 20px #2ecc71; }
         33% { border-color: #e74c3c; box-shadow: 0 0 30px #e74c3c; }
@@ -35,10 +47,10 @@
         max-width: 350px;
         box-shadow: 0px 20px 40px rgba(0,0,0,0.5);
         position: relative;
+        z-index: 1;
         transition: 0.5s;
     }
 
-    /* Clase que se activa con la música */
     .modo-fiesta-activa {
         animation: lucesFiesta 1.5s infinite alternate !important;
         transform: scale(1.05);
@@ -61,6 +73,12 @@
         cursor: pointer;
         margin-top: 20px;
         box-shadow: 0px 4px 15px rgba(39, 174, 96, 0.4);
+        transition: 0.3s;
+    }
+
+    button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 20px #2ecc71;
     }
 
     img {
@@ -87,7 +105,21 @@
         filter: invert(100%) hue-rotate(90deg) brightness(1.5);
     }
 
-    /* Hojas locas para la fiesta */
+    .contador-visitas {
+        margin-top: 20px;
+        font-size: 12px;
+        opacity: 0.7;
+    }
+
+    .contador-visitas img {
+        width: auto;
+        height: 20px;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        margin: 5px 0 0 0;
+    }
+
     .hoja-fiesta {
         animation: caer 2s linear infinite, cambiarColor 1s infinite !important;
     }
@@ -128,6 +160,8 @@
 </style>
 </head>
 <body>
+    <div class="mouse-glow" id="glow"></div>
+
     <div class="hojas-container" id="contenedorHojas">
         <div class="hoja" style="left: 10%; animation-duration: 5s;">🌿</div>
         <div class="hoja" style="left: 30%; animation-duration: 7s; animation-delay: 2s;">🌿</div>
@@ -148,8 +182,12 @@
             <p id="statusMusica">🎵 Escuchando: Watussi</p>
             <audio id="track" controls>
                 <source src="watussi.mp3" type="audio/mpeg">
-                Tu navegador no soporta el audio.
             </audio>
+        </div>
+
+        <div class="contador-visitas">
+            <p>VISITAS TOTALES</p>
+            <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fmirkobb88-art.github.io%2Ffrancis%2F&count_bg=%2327AE60&title_bg=%230A1A0A&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false" alt="contador">
         </div>
     </div>
 
@@ -158,13 +196,25 @@
         const tarjeta = document.getElementById('miTarjeta');
         const status = document.getElementById('statusMusica');
         const hojas = document.querySelectorAll('.hoja');
+        const glow = document.getElementById('glow');
+
+        // Seguimiento del mouse para el Glow
+        document.addEventListener('mousemove', (e) => {
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+        });
 
         // ACTIVAR MODO FIESTA
         audio.onplay = function() {
             tarjeta.classList.add('modo-fiesta-activa');
-            status.innerText = "🔥 ¡MODO FIESTA ACTIVO! 🔥";
+            status.innerText = "🔥 ¡LA QUIEBRA ACTIVA! 🔥";
             hojas.forEach(h => h.classList.add('hoja-fiesta'));
-            document.body.style.background = "#000"; // Fondo negro total para que resalte el neón
+            document.body.style.background = "#000";
+            
+            // Glow modo fiesta (más grande y colorido)
+            glow.style.width = "600px";
+            glow.style.height = "600px";
+            glow.style.background = "radial-gradient(circle, rgba(231, 76, 60, 0.3) 0%, rgba(0, 0, 0, 0) 70%)";
         };
 
         // DESACTIVAR MODO FIESTA
@@ -173,6 +223,11 @@
             status.innerText = "🎵 Escuchando: Watussi";
             hojas.forEach(h => h.classList.remove('hoja-fiesta'));
             document.body.style.background = "linear-gradient(135deg, #0a1a0a 0%, #1a3a1a 100%)";
+            
+            // Glow normal
+            glow.style.width = "400px";
+            glow.style.height = "400px";
+            glow.style.background = "radial-gradient(circle, rgba(46, 204, 113, 0.15) 0%, rgba(0, 0, 0, 0) 70%)";
         };
     </script>
 </body> 
