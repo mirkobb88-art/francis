@@ -34,7 +34,7 @@
         background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(46, 204, 113, 0.3);
-        padding: 50px 40px; /* Un poco más de espacio arriba */
+        padding: 50px 40px;
         border-radius: 20px;
         max-width: 350px;
         box-shadow: 0px 20px 40px rgba(0,0,0,0.5);
@@ -43,15 +43,12 @@
         transition: transform 0.1s linear;
     }
 
-    /* CONTENEDOR DE LA FOTO Y EL VISUALIZADOR */
+    /* --- CENTRADO PERFECTO --- */
     .foto-container {
         position: relative;
-        width: 150px;
-        height: 150px;
-        margin: 0 auto 20px auto;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        width: 160px; /* Espacio reservado */
+        height: 160px;
+        margin: 0 auto 25px auto;
     }
 
     img {
@@ -60,9 +57,13 @@
         width: 150px;
         height: 150px;
         object-fit: cover;
-        z-index: 10;
-        position: relative;
         box-shadow: 0px 0px 20px rgba(46, 204, 112, 0.6);
+        /* Esto asegura que la foto esté clavada en el centro */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
     }
 
     /* LAS BARRAS DEL VISUALIZADOR */
@@ -70,23 +71,24 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        width: 100%;
-        height: 100%;
+        width: 0;
+        height: 0;
         pointer-events: none;
         z-index: 5; /* Detrás de la foto */
     }
 
     .bar {
         position: absolute;
-        bottom: 50%;
-        left: 50%;
+        bottom: 0;
+        left: 0;
         width: 4px;
         background: #2ecc71;
         transform-origin: bottom center;
         border-radius: 2px;
-        opacity: 0.5;
+        opacity: 0.6;
         transition: height 0.05s ease;
     }
+    /* ------------------------- */
 
     .modo-fiesta-activa {
         background: rgba(255, 255, 255, 0.1) !important;
@@ -140,12 +142,13 @@
     .hoja {
         position: absolute;
         top: -50px;
-        font-size: 25px;
+        font-size: 22px;
+        opacity: 0.8;
         animation: caer linear infinite;
     }
 
     @keyframes caer {
-        0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+        0% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
         100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
     }
 </style>
@@ -154,15 +157,21 @@
     <div id="glow"></div>
 
     <div class="hojas-container">
-        <div class="hoja" style="left: 15%; animation-duration: 5s;">🌿</div>
-        <div class="hoja" style="left: 45%; animation-duration: 8s;">🌿</div>
-        <div class="hoja" style="left: 80%; animation-duration: 6s;">🌿</div>
+        <div class="hoja" style="left: 5%; animation-duration: 6s; animation-delay: 0s;">🌿</div>
+        <div class="hoja" style="left: 20%; animation-duration: 9s; animation-delay: 2s;">🌿</div>
+        <div class="hoja" style="left: 35%; animation-duration: 7s; animation-delay: 4s;">🌿</div>
+        <div class="hoja" style="left: 50%; animation-duration: 11s; animation-delay: 1s;">🌿</div>
+        <div class="hoja" style="left: 65%; animation-duration: 8s; animation-delay: 3s;">🌿</div>
+        <div class="hoja" style="left: 80%; animation-duration: 10s; animation-delay: 0s;">🌿</div>
+        <div class="hoja" style="left: 95%; animation-duration: 7s; animation-delay: 5s;">🌿</div>
+        <div class="hoja" style="left: 15%; animation-duration: 12s; animation-delay: 6s;">🌿</div>
     </div>
 
     <div class="tarjeta" id="miTarjeta">
         
         <div class="foto-container">
-            <div id="spectrum"></div> <img src="Captura.PNG" alt="Foto Francis"> 
+            <div id="spectrum"></div> 
+            <img src="Captura.PNG" alt="Foto Francis"> 
         </div>
 
         <h1> Soy Francis </h1>
@@ -193,13 +202,13 @@
         
         // --- 2. GENERAR LAS 60 BARRAS ---
         const totalBarras = 60;
-        const radio = 85; // Distancia desde el centro
+        const radio = 90; // Aumentado un poco para que no toque la foto
         
         for (let i = 0; i < totalBarras; i++) {
             let bar = document.createElement('div');
             bar.classList.add('bar');
             
-            // Calcular rotación para formar el círculo
+            // Calcular rotación para formar el círculo desde el centro
             let angle = (360 / totalBarras) * i;
             bar.style.transform = `rotate(${angle}deg) translateY(-${radio}px)`;
             
@@ -220,7 +229,7 @@
                 source.connect(analyser);
                 analyser.connect(audioCtx.destination);
                 
-                // 64 puntos de datos para las 60 barras (sobran 4, no pasa nada)
+                // 128 datos para tener buena resolución
                 analyser.fftSize = 128; 
                 dataArray = new Uint8Array(analyser.frequencyBinCount);
                 
@@ -235,24 +244,24 @@
             // Mover cada barra según su frecuencia
             barras.forEach((bar, i) => {
                 let valor = dataArray[i] || 0;
-                let altura = (valor / 255) * 60; // Altura máxima 60px
+                let altura = (valor / 255) * 50; 
                 
                 // Si la música está fuerte, cambiamos color
-                if (valor > 180) {
+                if (valor > 190) {
                     bar.style.backgroundColor = "#e74c3c"; // Rojo
-                    bar.style.boxShadow = "0 0 10px #e74c3c";
+                    bar.style.boxShadow = "0 0 8px #e74c3c";
                 } else {
                     bar.style.backgroundColor = "#2ecc71"; // Verde normal
                     bar.style.boxShadow = "none";
                 }
                 
                 // Aplicar altura
-                bar.style.height = `${5 + altura}px`; 
+                bar.style.height = `${4 + altura}px`; 
             });
             
-            // Vibración de la tarjeta con los bajos (índices bajos del array)
-            let bajos = dataArray[2]; 
-            if (bajos > 200) {
+            // Vibración de la tarjeta con los bajos
+            let bajos = dataArray[3]; 
+            if (bajos > 210) {
                 tarjeta.style.transform = `scale(1.02)`;
             } else {
                 tarjeta.style.transform = `scale(1)`;
@@ -267,7 +276,7 @@
             tarjeta.classList.add('modo-fiesta-activa');
             status.innerText = "🔥 ¡ESPECTRO ACTIVADO! 🔥";
             document.body.style.background = "#000";
-            glow.style.background = "radial-gradient(circle, rgba(231, 76, 60, 0.3) 0%, rgba(0, 0, 0, 0) 70%)";
+            glow.style.background = "radial-gradient(circle, rgba(231, 76, 60, 0.4) 0%, rgba(0, 0, 0, 0) 70%)";
         };
 
         audio.onpause = () => {
@@ -277,7 +286,7 @@
             glow.style.background = "radial-gradient(circle, rgba(46, 204, 113, 0.15) 0%, rgba(0, 0, 0, 0) 70%)";
         };
 
-        // --- 5. EXTRAS (Contador y Mouse) ---
+        // --- 5. EXTRAS ---
         let visitas = localStorage.getItem('visitas_francis') || 0;
         visitas = parseInt(visitas) + 1;
         localStorage.setItem('visitas_francis', visitas);
