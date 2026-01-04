@@ -27,14 +27,23 @@
         pointer-events: none;
         z-index: -2;
         transform: translate(-50%, -50%);
-        transition: background 0.5s, width 0.5s, height 0.5s;
+        transition: background 0.5s;
     }
 
-    @keyframes lucesFiesta {
-        0% { border-color: #2ecc71; box-shadow: 0 0 20px #2ecc71; }
-        33% { border-color: #e74c3c; box-shadow: 0 0 30px #e74c3c; }
-        66% { border-color: #f1c40f; box-shadow: 0 0 30px #f1c40f; }
-        100% { border-color: #9b59b6; box-shadow: 0 0 20px #9b59b6; }
+    /* LAS ONDAS DE BAJOS */
+    .onda-bajos {
+        position: absolute;
+        border: 2px solid #2ecc71;
+        border-radius: 25px;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        box-sizing: border-box;
+        pointer-events: none;
+        opacity: 0;
+        z-index: -1;
+        transition: transform 0.1s ease-out;
     }
 
     .tarjeta {
@@ -48,14 +57,12 @@
         box-shadow: 0px 20px 40px rgba(0,0,0,0.5);
         position: relative;
         z-index: 1;
-        transition: 0.5s;
+        transition: transform 0.05s linear; /* Muy rápido para seguir el ritmo */
     }
 
-    /* ESTA ES LA CLAVE DEL MODO FIESTA */
     .modo-fiesta-activa {
-        animation: lucesFiesta 1.5s infinite alternate !important;
-        transform: scale(1.05);
         background: rgba(255, 255, 255, 0.1) !important;
+        border-color: #fff !important;
     }
 
     a {
@@ -64,17 +71,6 @@
         font-weight: bold;
         display: inline-block;
         margin: 15px 0;
-    }
-
-    button {
-        background-color: #27ae60;
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 8px;
-        cursor: pointer;
-        box-shadow: 0px 4px 15px rgba(39, 174, 96, 0.4);
-        transition: 0.3s;
     }
 
     img {
@@ -105,7 +101,6 @@
         margin-top: 20px;
         font-size: 10px;
         color: #2ecc71;
-        letter-spacing: 2px;
     }
 
     #num-visitas {
@@ -116,27 +111,12 @@
         text-shadow: 0 0 10px #2ecc71;
     }
 
-    .hoja-fiesta {
-        animation: caer 2s linear infinite, cambiarColor 1s infinite !important;
-    }
-
-    @keyframes cambiarColor {
-        0% { filter: hue-rotate(0deg); }
-        100% { filter: hue-rotate(360deg); }
-    }
-
-    @keyframes aparecer {
-        from {opacity: 0; transform: translateY(30px);}
-        to {opacity: 1; transform: translateY(0);}
-    }
-
     .hojas-container {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        overflow: hidden;
         z-index: -1;
         pointer-events: none;
     }
@@ -145,28 +125,28 @@
         position: absolute;
         top: -50px;
         font-size: 25px;
-        user-select: none;
         animation: caer linear infinite;
     }
 
     @keyframes caer {
-        0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 1; }
-        100% { transform: translateY(110vh) rotate(720deg) translateX(50px); opacity: 0; }
+        0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
     }
 </style>
 </head>
 <body>
     <div class="mouse-glow" id="glow"></div>
 
-    <div class="hojas-container" id="contenedorHojas">
+    <div class="hojas-container">
         <div class="hoja" style="left: 10%; animation-duration: 5s;">🌿</div>
-        <div class="hoja" style="left: 30%; animation-duration: 7s; animation-delay: 2s;">🌿</div>
-        <div class="hoja" style="left: 50%; animation-duration: 6s; animation-delay: 1s;">🌿</div>
-        <div class="hoja" style="left: 70%; animation-duration: 8s; animation-delay: 3s;">🌿</div>
-        <div class="hoja" style="left: 90%; animation-duration: 5s; animation-delay: 0.5s;">🌿</div>
+        <div class="hoja" style="left: 40%; animation-duration: 7s;">🌿</div>
+        <div class="hoja" style="left: 70%; animation-duration: 6s;">🌿</div>
     </div>
 
     <div class="tarjeta" id="miTarjeta">
+        <div class="onda-bajos" id="onda1"></div>
+        <div class="onda-bajos" id="onda2"></div>
+
         <img src="Captura.PNG" alt="Foto de Thaiel"> 
         <h1> Soy Francis </h1>
         <p style="font-size: 12px;">La quiebra activa - Sitio Oficial</p>
@@ -174,8 +154,8 @@
         <a href="https://www.instagram.com/benites_francis/">📸 IR A MI INSTAGRAM</a>
         
         <div class="musica-box">
-            <p id="statusMusica" style="font-size: 10px;">🎵 ESCUCHANDO: WATUSSI</p>
-            <audio id="track" controls>
+            <p id="statusMusica" style="font-size: 10px;">🎵 DALE PLAY PARA LAS ONDAS</p>
+            <audio id="track" controls crossorigin="anonymous">
                 <source src="watussi.mp3" type="audio/mpeg">
             </audio>
         </div>
@@ -190,43 +170,62 @@
         const audio = document.getElementById('track');
         const tarjeta = document.getElementById('miTarjeta');
         const status = document.getElementById('statusMusica');
-        const hojas = document.querySelectorAll('.hoja');
         const glow = document.getElementById('glow');
+        const onda1 = document.getElementById('onda1');
+        const onda2 = document.getElementById('onda2');
 
-        // Seguimiento del mouse
-        document.addEventListener('mousemove', (e) => {
-            glow.style.left = e.clientX + 'px';
-            glow.style.top = e.clientY + 'px';
-        });
+        let audioCtx, analyser, dataArray, source;
 
-        // REPARACIÓN MODO FIESTA
+        // FUNCIÓN PARA ANALIZAR EL SONIDO
+        function setupVisualizer() {
+            if (audioCtx) return; // No repetir si ya está creado
+
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            source = audioCtx.createMediaElementSource(audio);
+            source.connect(analyser);
+            analyser.connect(audioCtx.destination);
+
+            analyser.fftSize = 64; // Captura bajos potentes
+            const bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength);
+
+            updateVisuals();
+        }
+
+        function updateVisuals() {
+            requestAnimationFrame(updateVisuals);
+            analyser.getByteFrequencyData(dataArray);
+
+            // El primer valor del array suele ser el bajo (Kick/Bombo)
+            let bajo = dataArray[0]; 
+            let intensida = bajo / 255;
+
+            // Hacer que la tarjeta vibre un poquito
+            tarjeta.style.transform = `scale(${1 + intensida * 0.05})`;
+
+            // Mover las ondas
+            onda1.style.transform = `scale(${1 + intensida * 0.5})`;
+            onda1.style.opacity = intensida;
+            onda1.style.borderColor = `hsl(${120 + intensida * 100}, 100%, 50%)`;
+
+            onda2.style.transform = `scale(${1 + intensida * 0.8})`;
+            onda2.style.opacity = intensida * 0.5;
+        }
+
         audio.onplay = function() {
-            tarjeta.classList.add('modo-fiesta-activa');
-            status.innerText = "🔥 ¡MODO FIESTA ACTIVO! 🔥";
-            hojas.forEach(h => h.classList.add('hoja-fiesta'));
-            document.body.style.background = "#000";
+            setupVisualizer();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             
-            glow.style.width = "600px";
-            glow.style.height = "600px";
+            tarjeta.classList.add('modo-fiesta-activa');
+            status.innerText = "🔥 ¡BAJOS ACTIVOS! 🔥";
+            document.body.style.background = "#000";
             glow.style.background = "radial-gradient(circle, rgba(231, 76, 60, 0.3) 0%, rgba(0, 0, 0, 0) 70%)";
         };
 
         audio.onpause = function() {
             tarjeta.classList.remove('modo-fiesta-activa');
             status.innerText = "🎵 ESCUCHANDO: WATUSSI";
-            hojas.forEach(h => h.classList.remove('hoja-fiesta'));
             document.body.style.background = "linear-gradient(135deg, #0a1a0a 0%, #1a3a1a 100%)";
-            
-            glow.style.width = "400px";
-            glow.style.height = "400px";
             glow.style.background = "radial-gradient(circle, rgba(46, 204, 113, 0.15) 0%, rgba(0, 0, 0, 0) 70%)";
-        };
-
-        // Contador persistente
-        let visitas = localStorage.getItem('visitas') || 100;
-        visitas = parseInt(visitas) + 1;
-        localStorage.setItem('visitas', visitas);
-        document.getElementById('num-visitas').innerText = visitas.toString().padStart(4, '0');
-    </script>
-</body> 
-</html>
+            onda1.style.opacity = 0;
