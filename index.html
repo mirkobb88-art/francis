@@ -17,7 +17,7 @@
         transition: background 0.5s;
     }
 
-    /* GLOW DEL MOUSE REPARADO */
+    /* GLOW DEL MOUSE */
     #glow {
         position: fixed;
         width: 400px;
@@ -30,44 +30,28 @@
         transition: background 0.5s;
     }
 
-    /* ONDAS DE BAJOS */
-    .onda-bajos {
-        position: absolute;
-        border: 2px solid #2ecc71;
-        border-radius: 25px;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        box-sizing: border-box;
-        pointer-events: none;
-        opacity: 0;
-        z-index: -1;
-    }
-
     .tarjeta {
         background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(46, 204, 113, 0.3);
-        padding: 40px;
+        padding: 50px 40px; /* Un poco más de espacio arriba */
         border-radius: 20px;
         max-width: 350px;
         box-shadow: 0px 20px 40px rgba(0,0,0,0.5);
         position: relative;
         z-index: 1;
-        transition: transform 0.1s linear, background 0.5s;
+        transition: transform 0.1s linear;
     }
 
-    /* MODO FIESTA ANIMADO */
-    @keyframes lucesFiesta {
-        0% { border-color: #2ecc71; box-shadow: 0 0 20px #2ecc71; }
-        50% { border-color: #e74c3c; box-shadow: 0 0 30px #e74c3c; }
-        100% { border-color: #f1c40f; box-shadow: 0 0 20px #f1c40f; }
-    }
-
-    .modo-fiesta-activa {
-        animation: lucesFiesta 1.5s infinite alternate !important;
-        background: rgba(255, 255, 255, 0.1) !important;
+    /* CONTENEDOR DE LA FOTO Y EL VISUALIZADOR */
+    .foto-container {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin: 0 auto 20px auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     img {
@@ -76,8 +60,37 @@
         width: 150px;
         height: 150px;
         object-fit: cover;
-        margin-bottom: 20px; 
+        z-index: 10;
+        position: relative;
         box-shadow: 0px 0px 20px rgba(46, 204, 112, 0.6);
+    }
+
+    /* LAS BARRAS DEL VISUALIZADOR */
+    #spectrum {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 5; /* Detrás de la foto */
+    }
+
+    .bar {
+        position: absolute;
+        bottom: 50%;
+        left: 50%;
+        width: 4px;
+        background: #2ecc71;
+        transform-origin: bottom center;
+        border-radius: 2px;
+        opacity: 0.5;
+        transition: height 0.05s ease;
+    }
+
+    .modo-fiesta-activa {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-color: #fff !important;
     }
 
     a {
@@ -147,18 +160,19 @@
     </div>
 
     <div class="tarjeta" id="miTarjeta">
-        <div class="onda-bajos" id="onda1"></div>
-        <div class="onda-bajos" id="onda2"></div>
+        
+        <div class="foto-container">
+            <div id="spectrum"></div> <img src="Captura.PNG" alt="Foto Francis"> 
+        </div>
 
-        <img src="Captura.PNG" alt="Foto Francis"> 
         <h1> Soy Francis </h1>
-        <p style="font-size: 12px;">La quiebra activa - Sitio Oficial</p>
+        <p style="font-size: 12px;">La quiebra activa - Beats Reales</p>
         
         <a href="https://www.instagram.com/benites_francis/" target="_blank">📸 IR A MI INSTAGRAM</a>
         
         <div class="musica-box">
-            <p id="statusMusica" style="font-size: 10px;">🎵 DALE PLAY PARA ACTIVAR</p>
-            <audio id="track" controls>
+            <p id="statusMusica" style="font-size: 10px;">🎵 DALE PLAY PARA VER EL ESPECTRO</p>
+            <audio id="track" controls crossorigin="anonymous">
                 <source src="watussi.mp3" type="audio/mpeg">
             </audio>
         </div>
@@ -170,32 +184,33 @@
     </div>
 
     <script>
-        // --- 1. REFERENCIAS ---
+        // --- 1. CONFIGURACIÓN ---
         const audio = document.getElementById('track');
         const tarjeta = document.getElementById('miTarjeta');
         const status = document.getElementById('statusMusica');
         const glow = document.getElementById('glow');
-        const onda1 = document.getElementById('onda1');
-        const onda2 = document.getElementById('onda2');
+        const spectrum = document.getElementById('spectrum');
+        
+        // --- 2. GENERAR LAS 60 BARRAS ---
+        const totalBarras = 60;
+        const radio = 85; // Distancia desde el centro
+        
+        for (let i = 0; i < totalBarras; i++) {
+            let bar = document.createElement('div');
+            bar.classList.add('bar');
+            
+            // Calcular rotación para formar el círculo
+            let angle = (360 / totalBarras) * i;
+            bar.style.transform = `rotate(${angle}deg) translateY(-${radio}px)`;
+            
+            spectrum.appendChild(bar);
+        }
+        
+        const barras = document.querySelectorAll('.bar');
 
+        // --- 3. AUDIO VISUALIZER ---
         let audioCtx, analyser, dataArray, source;
 
-        // --- 2. CONTADOR DE VISITAS (REPARADO) ---
-        function actualizarContador() {
-            let visitas = localStorage.getItem('visitas_francis') || 0;
-            visitas = parseInt(visitas) + 1;
-            localStorage.setItem('visitas_francis', visitas);
-            document.getElementById('num-visitas').innerText = visitas.toString().padStart(4, '0');
-        }
-        actualizarContador();
-
-        // --- 3. MOVIMIENTO DEL MOUSE (REPARADO) ---
-        document.addEventListener('mousemove', (e) => {
-            glow.style.left = e.clientX + 'px';
-            glow.style.top = e.clientY + 'px';
-        });
-
-        // --- 4. ANALIZADOR DE AUDIO Y ONDAS ---
         function activarVisualizador() {
             if (audioCtx) return;
             try {
@@ -204,35 +219,53 @@
                 analyser = audioCtx.createAnalyser();
                 source.connect(analyser);
                 analyser.connect(audioCtx.destination);
-                analyser.fftSize = 64;
+                
+                // 64 puntos de datos para las 60 barras (sobran 4, no pasa nada)
+                analyser.fftSize = 128; 
                 dataArray = new Uint8Array(analyser.frequencyBinCount);
+                
                 loopVisual();
-            } catch(e) { console.log("Error de audio:", e); }
+            } catch(e) { console.log("Error Audio:", e); }
         }
 
         function loopVisual() {
             requestAnimationFrame(loopVisual);
-            if (!analyser) return;
             analyser.getByteFrequencyData(dataArray);
-            
-            let bajo = dataArray[0]; 
-            let intensida = bajo / 255;
 
-            // Vibración de tarjeta y ondas
-            tarjeta.style.transform = `scale(${1 + intensida * 0.05})`;
-            onda1.style.transform = `scale(${1 + intensida * 0.4})`;
-            onda1.style.opacity = intensida;
-            onda2.style.transform = `scale(${1 + intensida * 0.7})`;
-            onda2.style.opacity = intensida * 0.5;
+            // Mover cada barra según su frecuencia
+            barras.forEach((bar, i) => {
+                let valor = dataArray[i] || 0;
+                let altura = (valor / 255) * 60; // Altura máxima 60px
+                
+                // Si la música está fuerte, cambiamos color
+                if (valor > 180) {
+                    bar.style.backgroundColor = "#e74c3c"; // Rojo
+                    bar.style.boxShadow = "0 0 10px #e74c3c";
+                } else {
+                    bar.style.backgroundColor = "#2ecc71"; // Verde normal
+                    bar.style.boxShadow = "none";
+                }
+                
+                // Aplicar altura
+                bar.style.height = `${5 + altura}px`; 
+            });
+            
+            // Vibración de la tarjeta con los bajos (índices bajos del array)
+            let bajos = dataArray[2]; 
+            if (bajos > 200) {
+                tarjeta.style.transform = `scale(1.02)`;
+            } else {
+                tarjeta.style.transform = `scale(1)`;
+            }
         }
 
-        // --- 5. EVENTOS DE PLAY/PAUSE ---
+        // --- 4. EVENTOS ---
         audio.onplay = () => {
             activarVisualizador();
-            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             
             tarjeta.classList.add('modo-fiesta-activa');
-            status.innerText = "🔥 ¡LA QUIEBRA ACTIVA! 🔥";
+            status.innerText = "🔥 ¡ESPECTRO ACTIVADO! 🔥";
             document.body.style.background = "#000";
             glow.style.background = "radial-gradient(circle, rgba(231, 76, 60, 0.3) 0%, rgba(0, 0, 0, 0) 70%)";
         };
@@ -242,9 +275,18 @@
             status.innerText = "🎵 ESCUCHANDO: WATUSSI";
             document.body.style.background = "linear-gradient(135deg, #0a1a0a 0%, #1a3a1a 100%)";
             glow.style.background = "radial-gradient(circle, rgba(46, 204, 113, 0.15) 0%, rgba(0, 0, 0, 0) 70%)";
-            onda1.style.opacity = 0;
-            onda2.style.opacity = 0;
         };
+
+        // --- 5. EXTRAS (Contador y Mouse) ---
+        let visitas = localStorage.getItem('visitas_francis') || 0;
+        visitas = parseInt(visitas) + 1;
+        localStorage.setItem('visitas_francis', visitas);
+        document.getElementById('num-visitas').innerText = visitas.toString().padStart(4, '0');
+
+        document.addEventListener('mousemove', (e) => {
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+        });
     </script>
 </body> 
 </html>
