@@ -13,7 +13,7 @@
         align-items: center;
         min-height: 100vh;
         margin: 0;
-        overflow: hidden; /* Evita scrolls raros */
+        overflow: hidden;
         transition: background 0.5s;
     }
 
@@ -71,14 +71,22 @@
         padding: 12px 24px;
         border-radius: 8px;
         cursor: pointer;
-        margin-top: 20px;
+        margin-top: 15px;
         box-shadow: 0px 4px 15px rgba(39, 174, 96, 0.4);
         transition: 0.3s;
+        width: 100%;
     }
 
     button:hover {
-        transform: scale(1.1);
+        transform: scale(1.05);
         box-shadow: 0 0 20px #2ecc71;
+    }
+
+    .btn-alias {
+        background-color: transparent;
+        border: 1px solid #2ecc71;
+        color: #2ecc71;
+        font-size: 11px;
     }
 
     img {
@@ -105,19 +113,20 @@
         filter: invert(100%) hue-rotate(90deg) brightness(1.5);
     }
 
-    .contador-visitas {
+    /* CONTADOR ESTILO RETRO */
+    .contador-nuevo {
         margin-top: 20px;
-        font-size: 12px;
-        opacity: 0.7;
+        font-size: 10px;
+        color: #2ecc71;
     }
 
-    .contador-visitas img {
-        width: auto;
-        height: 20px;
-        border: none;
-        border-radius: 0;
-        box-shadow: none;
-        margin: 5px 0 0 0;
+    #num-visitas {
+        font-size: 20px;
+        display: block;
+        font-weight: bold;
+        letter-spacing: 3px;
+        color: #fff;
+        text-shadow: 0 0 10px #2ecc71;
     }
 
     .hoja-fiesta {
@@ -173,21 +182,22 @@
     <div class="tarjeta" id="miTarjeta">
         <img src="Captura.PNG" alt="Foto de Thaiel"> 
         <h1> Soy Francis </h1>
-        <p> Este es mi primer sitio creado desde 0 </p>
-        <a href="https://www.instagram.com/benites_francis/">ir a mi instagram</a>
-        <br>
-        <button onclick="alert('Mi Instagram es @benites_francis')">Presióname</button>
+        <p style="font-size: 12px;">La quiebra activa - Primer sitio desde 0</p>
+        
+        <a href="https://www.instagram.com/benites_francis/">📸 ir a mi instagram</a>
+        
+        <button class="btn-alias" onclick="copiarAlias()">💰 APOYAR LA CAUSA (ALIAS)</button>
 
         <div class="musica-box">
-            <p id="statusMusica">🎵 Escuchando: Watussi</p>
+            <p id="statusMusica" style="font-size: 10px;">🎵 Escuchando: Watussi</p>
             <audio id="track" controls>
                 <source src="watussi.mp3" type="audio/mpeg">
             </audio>
         </div>
 
-        <div class="contador-visitas">
-            <p>VISITAS TOTALES</p>
-            <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fmirkobb88-art.github.io%2Ffrancis%2F&count_bg=%2327AE60&title_bg=%230A1A0A&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false" alt="contador">
+        <div class="contador-nuevo">
+            VISITANTES
+            <span id="num-visitas">0001</span>
         </div>
     </div>
 
@@ -198,37 +208,8 @@
         const hojas = document.querySelectorAll('.hoja');
         const glow = document.getElementById('glow');
 
-        // Seguimiento del mouse para el Glow
-        document.addEventListener('mousemove', (e) => {
-            glow.style.left = e.clientX + 'px';
-            glow.style.top = e.clientY + 'px';
-        });
-
-        // ACTIVAR MODO FIESTA
-        audio.onplay = function() {
-            tarjeta.classList.add('modo-fiesta-activa');
-            status.innerText = "🔥 ¡LA QUIEBRA ACTIVA! 🔥";
-            hojas.forEach(h => h.classList.add('hoja-fiesta'));
-            document.body.style.background = "#000";
-            
-            // Glow modo fiesta (más grande y colorido)
-            glow.style.width = "600px";
-            glow.style.height = "600px";
-            glow.style.background = "radial-gradient(circle, rgba(231, 76, 60, 0.3) 0%, rgba(0, 0, 0, 0) 70%)";
-        };
-
-        // DESACTIVAR MODO FIESTA
-        audio.onpause = function() {
-            tarjeta.classList.remove('modo-fiesta-activa');
-            status.innerText = "🎵 Escuchando: Watussi";
-            hojas.forEach(h => h.classList.remove('hoja-fiesta'));
-            document.body.style.background = "linear-gradient(135deg, #0a1a0a 0%, #1a3a1a 100%)";
-            
-            // Glow normal
-            glow.style.width = "400px";
-            glow.style.height = "400px";
-            glow.style.background = "radial-gradient(circle, rgba(46, 204, 113, 0.15) 0%, rgba(0, 0, 0, 0) 70%)";
-        };
-    </script>
-</body> 
-</html>
+        // Función para copiar el Alias
+        function copiarAlias() {
+            const alias = "TU.ALIAS.AQUI"; // Reemplaza esto con tu Alias real
+            navigator.clipboard.writeText(alias);
+            alert("¡Alias copiado: " + alias + "! Gracias por el apoyo f
