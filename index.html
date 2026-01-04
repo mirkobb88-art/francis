@@ -51,9 +51,11 @@
         transition: 0.5s;
     }
 
+    /* ESTA ES LA CLAVE DEL MODO FIESTA */
     .modo-fiesta-activa {
         animation: lucesFiesta 1.5s infinite alternate !important;
         transform: scale(1.05);
+        background: rgba(255, 255, 255, 0.1) !important;
     }
 
     a {
@@ -61,7 +63,7 @@
         text-decoration: none;
         font-weight: bold;
         display: inline-block;
-        margin-top: 10px;
+        margin: 15px 0;
     }
 
     button {
@@ -71,22 +73,8 @@
         padding: 12px 24px;
         border-radius: 8px;
         cursor: pointer;
-        margin-top: 15px;
         box-shadow: 0px 4px 15px rgba(39, 174, 96, 0.4);
         transition: 0.3s;
-        width: 100%;
-    }
-
-    button:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 20px #2ecc71;
-    }
-
-    .btn-alias {
-        background-color: transparent;
-        border: 1px solid #2ecc71;
-        color: #2ecc71;
-        font-size: 11px;
     }
 
     img {
@@ -113,18 +101,17 @@
         filter: invert(100%) hue-rotate(90deg) brightness(1.5);
     }
 
-    /* CONTADOR ESTILO RETRO */
     .contador-nuevo {
         margin-top: 20px;
         font-size: 10px;
         color: #2ecc71;
+        letter-spacing: 2px;
     }
 
     #num-visitas {
-        font-size: 20px;
+        font-size: 22px;
         display: block;
         font-weight: bold;
-        letter-spacing: 3px;
         color: #fff;
         text-shadow: 0 0 10px #2ecc71;
     }
@@ -182,22 +169,20 @@
     <div class="tarjeta" id="miTarjeta">
         <img src="Captura.PNG" alt="Foto de Thaiel"> 
         <h1> Soy Francis </h1>
-        <p style="font-size: 12px;">La quiebra activa - Primer sitio desde 0</p>
+        <p style="font-size: 12px;">La quiebra activa - Sitio Oficial</p>
         
-        <a href="https://www.instagram.com/benites_francis/">📸 ir a mi instagram</a>
+        <a href="https://www.instagram.com/benites_francis/">📸 IR A MI INSTAGRAM</a>
         
-        <button class="btn-alias" onclick="copiarAlias()">💰 APOYAR LA CAUSA (ALIAS)</button>
-
         <div class="musica-box">
-            <p id="statusMusica" style="font-size: 10px;">🎵 Escuchando: Watussi</p>
+            <p id="statusMusica" style="font-size: 10px;">🎵 ESCUCHANDO: WATUSSI</p>
             <audio id="track" controls>
                 <source src="watussi.mp3" type="audio/mpeg">
             </audio>
         </div>
 
         <div class="contador-nuevo">
-            VISITANTES
-            <span id="num-visitas">0001</span>
+            VECES VISITADA
+            <span id="num-visitas">0000</span>
         </div>
     </div>
 
@@ -208,8 +193,40 @@
         const hojas = document.querySelectorAll('.hoja');
         const glow = document.getElementById('glow');
 
-        // Función para copiar el Alias
-        function copiarAlias() {
-            const alias = "TU.ALIAS.AQUI"; // Reemplaza esto con tu Alias real
-            navigator.clipboard.writeText(alias);
-            alert("¡Alias copiado: " + alias + "! Gracias por el apoyo f
+        // Seguimiento del mouse
+        document.addEventListener('mousemove', (e) => {
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+        });
+
+        // REPARACIÓN MODO FIESTA
+        audio.onplay = function() {
+            tarjeta.classList.add('modo-fiesta-activa');
+            status.innerText = "🔥 ¡MODO FIESTA ACTIVO! 🔥";
+            hojas.forEach(h => h.classList.add('hoja-fiesta'));
+            document.body.style.background = "#000";
+            
+            glow.style.width = "600px";
+            glow.style.height = "600px";
+            glow.style.background = "radial-gradient(circle, rgba(231, 76, 60, 0.3) 0%, rgba(0, 0, 0, 0) 70%)";
+        };
+
+        audio.onpause = function() {
+            tarjeta.classList.remove('modo-fiesta-activa');
+            status.innerText = "🎵 ESCUCHANDO: WATUSSI";
+            hojas.forEach(h => h.classList.remove('hoja-fiesta'));
+            document.body.style.background = "linear-gradient(135deg, #0a1a0a 0%, #1a3a1a 100%)";
+            
+            glow.style.width = "400px";
+            glow.style.height = "400px";
+            glow.style.background = "radial-gradient(circle, rgba(46, 204, 113, 0.15) 0%, rgba(0, 0, 0, 0) 70%)";
+        };
+
+        // Contador persistente
+        let visitas = localStorage.getItem('visitas') || 100;
+        visitas = parseInt(visitas) + 1;
+        localStorage.setItem('visitas', visitas);
+        document.getElementById('num-visitas').innerText = visitas.toString().padStart(4, '0');
+    </script>
+</body> 
+</html>
